@@ -1,7 +1,14 @@
 """Registers the internal gym envs then loads the env plugins for module using the entry point."""
 from typing import Any
 
-from gymnasium.envs.registration import make, pprint_registry, register, registry, spec
+from gymnasium.envs.registration import (
+    load_plugin_envs,
+    make,
+    pprint_registry,
+    register,
+    registry,
+    spec,
+)
 
 
 # Classic
@@ -20,6 +27,14 @@ register(
     entry_point="gymnasium.envs.classic_control.cartpole:CartPoleEnv",
     vector_entry_point="gymnasium.envs.classic_control.cartpole:CartPoleVectorEnv",
     max_episode_steps=500,
+    reward_threshold=475.0,
+)
+
+register(
+    id="CartPendulum-v0",
+    entry_point="gymnasium.envs.classic_control.cart_pendulum:CartPendulumEnv",
+    vector_entry_point="gymnasium.envs.classic_control.cart_pendulum:CartPendulumVectorEnv",
+    max_episode_steps=1000,
     reward_threshold=475.0,
 )
 
@@ -161,6 +176,7 @@ register(
 register(
     id="tabular/Blackjack-v0",
     entry_point="gymnasium.envs.tabular.blackjack:BlackJackJaxEnv",
+    kwargs={"sutton_and_barto": True, "natural": False},
 )
 
 register(
@@ -172,11 +188,11 @@ register(
 # Mujoco
 # ----------------------------------------
 
-# manipulation
+# 2D
 
 register(
     id="Reacher-v2",
-    entry_point="gymnasium.envs.mujoco.reacher:ReacherEnv",
+    entry_point="gymnasium.envs.mujoco:ReacherEnv",
     max_episode_steps=50,
     reward_threshold=-3.75,
 )
@@ -189,15 +205,8 @@ register(
 )
 
 register(
-    id="Reacher-v5",
-    entry_point="gymnasium.envs.mujoco.reacher_v5:ReacherEnv",
-    max_episode_steps=50,
-    reward_threshold=-3.75,
-)
-
-register(
     id="Pusher-v2",
-    entry_point="gymnasium.envs.mujoco.pucher:PusherEnv",
+    entry_point="gymnasium.envs.mujoco:PusherEnv",
     max_episode_steps=100,
     reward_threshold=0.0,
 )
@@ -210,17 +219,8 @@ register(
 )
 
 register(
-    id="Pusher-v5",
-    entry_point="gymnasium.envs.mujoco.pusher_v5:PusherEnv",
-    max_episode_steps=100,
-    reward_threshold=0.0,
-)
-
-# balance
-
-register(
     id="InvertedPendulum-v2",
-    entry_point="gymnasium.envs.mujoco.inverted_pendulum:InvertedPendulumEnv",
+    entry_point="gymnasium.envs.mujoco:InvertedPendulumEnv",
     max_episode_steps=1000,
     reward_threshold=950.0,
 )
@@ -233,15 +233,8 @@ register(
 )
 
 register(
-    id="InvertedPendulum-v5",
-    entry_point="gymnasium.envs.mujoco.inverted_pendulum_v5:InvertedPendulumEnv",
-    max_episode_steps=1000,
-    reward_threshold=950.0,
-)
-
-register(
     id="InvertedDoublePendulum-v2",
-    entry_point="gymnasium.envs.mujoco.inverted_double_pendulum:InvertedDoublePendulumEnv",
+    entry_point="gymnasium.envs.mujoco:InvertedDoublePendulumEnv",
     max_episode_steps=1000,
     reward_threshold=9100.0,
 )
@@ -254,17 +247,8 @@ register(
 )
 
 register(
-    id="InvertedDoublePendulum-v5",
-    entry_point="gymnasium.envs.mujoco.inverted_double_pendulum_v5:InvertedDoublePendulumEnv",
-    max_episode_steps=1000,
-    reward_threshold=9100.0,
-)
-
-# runners
-
-register(
     id="HalfCheetah-v2",
-    entry_point="gymnasium.envs.mujoco.half_cheetah:HalfCheetahEnv",
+    entry_point="gymnasium.envs.mujoco:HalfCheetahEnv",
     max_episode_steps=1000,
     reward_threshold=4800.0,
 )
@@ -284,15 +268,8 @@ register(
 )
 
 register(
-    id="HalfCheetah-v5",
-    entry_point="gymnasium.envs.mujoco.half_cheetah_v5:HalfCheetahEnv",
-    max_episode_steps=1000,
-    reward_threshold=4800.0,
-)
-
-register(
     id="Hopper-v2",
-    entry_point="gymnasium.envs.mujoco.hopper:HopperEnv",
+    entry_point="gymnasium.envs.mujoco:HopperEnv",
     max_episode_steps=1000,
     reward_threshold=3800.0,
 )
@@ -312,15 +289,8 @@ register(
 )
 
 register(
-    id="Hopper-v5",
-    entry_point="gymnasium.envs.mujoco.hopper_v5:HopperEnv",
-    max_episode_steps=1000,
-    reward_threshold=3800.0,
-)
-
-register(
     id="Swimmer-v2",
-    entry_point="gymnasium.envs.mujoco.swimmer:SwimmerEnv",
+    entry_point="gymnasium.envs.mujoco:SwimmerEnv",
     max_episode_steps=1000,
     reward_threshold=360.0,
 )
@@ -340,16 +310,9 @@ register(
 )
 
 register(
-    id="Swimmer-v5",
-    entry_point="gymnasium.envs.mujoco.swimmer_v5:SwimmerEnv",
-    max_episode_steps=1000,
-    reward_threshold=360.0,
-)
-
-register(
     id="Walker2d-v2",
     max_episode_steps=1000,
-    entry_point="gymnasium.envs.mujoco.walker2d:Walker2dEnv",
+    entry_point="gymnasium.envs.mujoco:Walker2dEnv",
 )
 
 register(
@@ -365,14 +328,8 @@ register(
 )
 
 register(
-    id="Walker2d-v5",
-    max_episode_steps=1000,
-    entry_point="gymnasium.envs.mujoco.walker2d_v5:Walker2dEnv",
-)
-
-register(
     id="Ant-v2",
-    entry_point="gymnasium.envs.mujoco.ant:AntEnv",
+    entry_point="gymnasium.envs.mujoco:AntEnv",
     max_episode_steps=1000,
     reward_threshold=6000.0,
 )
@@ -392,15 +349,8 @@ register(
 )
 
 register(
-    id="Ant-v5",
-    entry_point="gymnasium.envs.mujoco.ant_v5:AntEnv",
-    max_episode_steps=1000,
-    reward_threshold=6000.0,
-)
-
-register(
     id="Humanoid-v2",
-    entry_point="gymnasium.envs.mujoco.humanoid:HumanoidEnv",
+    entry_point="gymnasium.envs.mujoco:HumanoidEnv",
     max_episode_steps=1000,
 )
 
@@ -417,26 +367,14 @@ register(
 )
 
 register(
-    id="Humanoid-v5",
-    entry_point="gymnasium.envs.mujoco.humanoid_v5:HumanoidEnv",
-    max_episode_steps=1000,
-)
-
-register(
     id="HumanoidStandup-v2",
-    entry_point="gymnasium.envs.mujoco.humanoidstandup:HumanoidStandupEnv",
+    entry_point="gymnasium.envs.mujoco:HumanoidStandupEnv",
     max_episode_steps=1000,
 )
 
 register(
     id="HumanoidStandup-v4",
     entry_point="gymnasium.envs.mujoco.humanoidstandup_v4:HumanoidStandupEnv",
-    max_episode_steps=1000,
-)
-
-register(
-    id="HumanoidStandup-v5",
-    entry_point="gymnasium.envs.mujoco.humanoidstandup_v5:HumanoidStandupEnv",
     max_episode_steps=1000,
 )
 
@@ -451,3 +389,7 @@ def _raise_shimmy_error(*args: Any, **kwargs: Any):
 # When installed, shimmy will re-register these environments with the correct entry_point
 register(id="GymV21Environment-v0", entry_point=_raise_shimmy_error)
 register(id="GymV26Environment-v0", entry_point=_raise_shimmy_error)
+
+
+# Hook to load plugins from entry points
+load_plugin_envs()
